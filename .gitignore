@@ -1,57 +1,983 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+import pygame
+pygame.init()
 
-# C extensions
-*.so
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+YELLOW = (250,243,52)
+BLUE=(0,0,255)
+ORANGE=(247,137,20)
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
+size=(650,600)
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("My Game")
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+def draw_block (screen,x,y):
+        pygame.draw.rect(screen,BLUE,(x,y,30,30),2)
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*,cover
+#All
+#Classes
+class Character(pygame.sprite.Sprite):
+    """ This class represents the bar at the bottom that the player
+    controls. """
+    def __init__(self):
+            super().__init__()
+            self.name="Pac Man"
+            self.sex="Male"
+            self.lives="3"
+            
+    # Constructor function
+    def __init__(self, x, y):
+        # Call the parent's constructor
+        super().__init__()
+ 
+        # Set height, width
+        self.image = pygame.Surface([30, 30])
+        self.image.fill(WHITE)
+        self.image.set_colorkey(WHITE)
+        pygame.draw.ellipse(self.image, YELLOW, [0, 0, 30, 30])
+        
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+ 
+        # Set speed vector
+        self.change_x = 0
+        self.change_y = 0
+        self.walls = None
+ 
+    def changespeed(self, x, y):
+        """ Change the speed of the player. """
+        self.change_x += x
+        self.change_y += y
 
-# Translations
-*.mo
-*.pot
+    def update(self):
+        """ Update the player position. """
+        # Move left/right
+        self.rect.x += self.change_x
+ 
+        # Did this update cause us to hit a wall?
+        block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+        for block in block_hit_list:
+            # If we are moving right, set our right side to the left side of
+            # the item we hit
+            if self.change_x > 0:
+                self.rect.right = block.rect.left
+            else:
+                # Otherwise if we are moving left, do the opposite.
+                self.rect.left = block.rect.right
+ 
+        # Move up/down
+        self.rect.y += self.change_y
+ 
+        # Check and see if we hit anything
+        block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+        for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+            if self.change_y > 0:
+                self.rect.bottom = block.rect.top
+            else:
+                self.rect.top = block.rect.bottom
 
-# Django stuff:
-*.log
+class Clyde(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+                super().__init__()
+                self.image = pygame.image.load("Clyde1.png").convert()
+                self.image.set_colorkey(BLACK)
 
-# Sphinx documentation
-docs/_build/
+                self.rect = self.image.get_rect()
+                self.rect.x = x
+                self.rect.y = y 
 
-# PyBuilder
-target/
+                self.change_x = 1
+                self.change_y = 1
+                self.walls = None
+
+        def changespeed(self, x, y):
+                self.change_x += x
+                self.change_y += y
+
+        def update(self):
+                self.rect.x += self.change_x
+
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+                    # If we are moving right, set our right side to the left side of
+                    # the item we hit
+                    if self.change_x > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        # Otherwise if we are moving left, do the opposite.
+                        self.rect.left = block.rect.right
+ 
+        # Move up/down
+                self.rect.y += self.change_y
+ 
+        # Check and see if we hit anything
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+                            if self.change_y > 0:
+                                self.rect.bottom = block.rect.top
+                            else:
+                                self.rect.top = block.rect.bottom
+
+class Blinky(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+                super().__init__()
+                self.image = pygame.image.load("Blinky.gif").convert()
+                self.image.set_colorkey(BLACK)
+
+                self.rect = self.image.get_rect()
+                self.rect.x = x
+                self.rect.y = y
+
+                self.change_x = 1
+                self.change_y = 1
+                self.walls = None
+
+        def changespeed(self, x, y):
+                self.change_x += x
+                self.change_y += y
+
+        def update(self):
+                self.rect.x += self.change_x
+
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+                    # If we are moving right, set our right side to the left side of
+                    # the item we hit
+                    if self.change_x > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        # Otherwise if we are moving left, do the opposite.
+                        self.rect.left = block.rect.right
+ 
+        # Move up/down
+                self.rect.y += self.change_y
+ 
+        # Check and see if we hit anything
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+                            if self.change_y > 0:
+                                self.rect.bottom = block.rect.top
+                            else:
+                                self.rect.top = block.rect.bottom
+
+
+
+class Pinky(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+                super().__init__()
+                self.image = pygame.image.load("Pinky.gif").convert()
+                self.image.set_colorkey(BLACK)
+
+                self.rect = self.image.get_rect()
+                self.rect.x = x
+                self.rect.y = y
+
+                self.change_x = 1
+                self.change_y = 1
+                self.walls = None
+
+        def changespeed(self, x, y):
+                self.change_x += x
+                self.change_y += y
+
+        def update(self):
+                self.rect.x += self.change_x
+
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+                    # If we are moving right, set our right side to the left side of
+                    # the item we hit
+                    if self.change_x > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        # Otherwise if we are moving left, do the opposite.
+                        self.rect.left = block.rect.right
+ 
+        # Move up/down
+                self.rect.y += self.change_y
+ 
+        # Check and see if we hit anything
+                block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+                for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+                            if self.change_y > 0:
+                                self.rect.bottom = block.rect.top
+                            else:
+                                self.rect.top = block.rect.bottom
+
+
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self,x,y):  # initial position
+        super().__init__()
+        self.image = pygame.image.load("greenghost.png").convert()
+        self.image.set_colorkey(BLACK)
+
+
+
+      # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+   
+        # Set speed vector
+        self.change_x = 1
+        self.change_y = 1
+        self.walls = None
+        
+ 
+    def changespeed(self, x, y):
+        """ Change the speed of the player. """
+        self.change_x += x
+        self.change_y += y
+ 
+    def update(self):
+        """ Update the player position. """
+       # Move left/right
+        self.rect.x += self.change_x
+ 
+        # Did this update cause us to hit a wall?
+        block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+        for block in block_hit_list:
+            # If we are moving right, set our right side to the left side of
+            # the item we hit
+            if self.change_x > 0:
+                self.rect.right = block.rect.left
+            else:
+                # Otherwise if we are moving left, do the opposite.
+                self.rect.left = block.rect.right
+ 
+        # Move up/down
+        self.rect.y += self.change_y
+ 
+        # Check and see if we hit anything
+        block_hit_list = pygame.sprite.spritecollide(self, self.walls, False)
+        for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+            if self.change_y > 0:
+                self.rect.bottom = block.rect.top
+            else:
+                self.rect.top = block.rect.bottom
+
+class Block(pygame.sprite.Sprite):
+    """
+    This class represents the ball.
+    It derives from the "Sprite" class in Pygame.
+    """
+    def __init__(self, color, width, height):
+            super().__init__()
+            self.image = pygame.Surface([width, height])
+            self.image.fill(color)
+            self.rect = self.image.get_rect()
+                    
+         
+class Wall(pygame.sprite.Sprite):
+    """ Wall the player can run into. """
+    def __init__(self, x, y, width, height):
+        """ Constructor for the wall that the player can run into. """
+        # Call the parent's constructor
+        super().__init__()
+ 
+        # Make a blue wall, of the size specified in the parameters
+        self.image = pygame.Surface([width, height])
+        self.image.fill(BLUE)
+ 
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
+def make_level(screen):
+        if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                        screen.fill(BLACK)
+                        all_sprite_list.draw(screen)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                                
+                elif event.key == pygame.K_LEFT:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                
+                elif event.key == pygame.K_RIGHT:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                
+                elif event.key == pygame.K_UP:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                        
+                elif event.key == pygame.K_DOWN:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                        
+        if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                        screen.fill(BLACK)
+                        all_sprite_list.draw(screen)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                                
+                elif event.key == pygame.K_LEFT:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                
+                elif event.key == pygame.K_RIGHT:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                
+                elif event.key == pygame.K_UP:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+                        
+                elif event.key == pygame.K_DOWN:
+                        screen.fill(BLACK)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,50,50+y_offset)
+                        for x_offset in range(30,500,35):
+                                draw_block(screen,20+x_offset,50+y_offset)
+                        for y_offset in range(30,500,35):
+                                draw_block(screen,505,50+y_offset)
+                        all_sprite_list.draw(screen)
+
+def write_instructions(screen):
+        if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                        screen.fill(BLACK)
+                        font = pygame.font.SysFont('Pacfont',45,True,False)
+                        text2 = font.render("INSTRUCTIONS",True,WHITE)
+                        screen.blit(text2, [100,100])
+
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text3 = font.render("-MOVE PAC-MAN WITH ARROW KEYS AND EAT PELLETS",True,WHITE)
+                        screen.blit(text3, [20,200])
+                
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text4 = font.render("-AVOID THE GHOSTS!",True,WHITE)
+                        screen.blit(text4, [20, 250])
+
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text5 = font.render("-PRESS SPACE BAR TO BEGIN",True,WHITE)
+                        screen.blit(text5, [20, 300])
+                        screen.blit(text3, [20,200])
+        if event.type == pygame.KEYUP:
+               if event.key == pygame.K_RETURN:
+                        screen.fill(BLACK)
+                        font = pygame.font.SysFont('Pacfont',45,True,False)
+                        text2 = font.render("INSTRUCTIONS",True,WHITE)
+                        screen.blit(text2, [100,100])
+
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text3 = font.render("-MOVE PAC-MAN WITH ARROW KEYS AND EAT PELLETS",True,WHITE)
+                        screen.blit(text3, [20,200])
+                
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text4 = font.render("-AVOID THE GHOSTS!",True,WHITE)
+                        screen.blit(text4, [20, 250])
+
+                        font = pygame.font.SysFont('Pacfont',15,True,False)
+                        text5 = font.render("-PRESS SPACE BAR TO BEGIN",True,WHITE)
+                        screen.blit(text5, [20, 300])
+                        screen.blit(text3, [20,200])
+        
+def draw_pellet(screen, x, y):
+        pygame.draw.rect(screen,YELLOW,[x_offset, y_offset, 3, 3])
+
+def show_scores(screen, x, y):
+        font = pygame.font.SysFont('Calibri', 25, True, False)
+        text = font.render("Score: " + str(score), True, WHITE)
+        screen.blit(text, [x, y])
+
+def show_hiscores(screen, x, y):
+        font = pygame.font.SysFont('Pacfont', 30, True, False)
+        text = font.render("HISCORES:", True, YELLOW)
+        screen.blit(text, [190,180])
+        font = pygame.font.SysFont('Calibri', 25, True, False)
+        text = font.render("HIscore: " + str(score), True, WHITE)
+        screen.blit(text, [x, y])
+        for y_offset in range (50,300,25):
+                font = pygame.font.SysFont('Calibri', 25, True, False)
+                text = font.render("Score: " + str(score), True, WHITE) 
+                screen.blit(text, [x, y+y_offset])
+def pacman_moves(screen):
+        if event.type == pygame.KEYDOWN:
+             if event.key == pygame.K_LEFT:
+                pacman.changespeed(-3,0)
+             elif event.key == pygame.K_RIGHT:
+                pacman.changespeed(3,0)
+             elif event.key == pygame.K_UP:
+                pacman.changespeed(0,-3)
+             elif event.key == pygame.K_DOWN:
+                pacman.changespeed(0,3)
+def draw_credits(screen):
+        font = pygame.font.SysFont('Pacfont', 40, True, False)
+        text = font.render("CREDITS", True, ORANGE)
+        screen.blit(text, [160,100])
+
+        font1 = pygame.font.SysFont('Calibri', 30, True, False)
+        text1 = font1.render("Programmer", True, YELLOW)
+        screen.blit(text1, [105,160])
+
+        text2 = font1.render("Joaquin Rosado", True, YELLOW)
+        screen.blit(text2, [320,160])
+
+        text3 = font1.render("Graphics", True, YELLOW)
+        screen.blit(text3, [105,210])
+
+        screen.blit(text2, [320,210])
+
+        text4 = font1.render("Produced by", True, YELLOW)
+        screen.blit(text4, [105, 260])
+
+        screen.blit(text2, [320, 260])
+
+        text5 = font1.render("Created by", True, YELLOW)
+        screen.blit(text5, [105, 310])
+
+        screen.blit(text2, [320, 310])
+
+        font2 = pygame.font.SysFont('Pacfont', 30, True, False)
+        text6 = font2.render("THANKS FOR PLAYING!", True, RED)
+        screen.blit(text6, [50,500])
+        
+#All
+#lists 
+
+block_list = pygame.sprite.Group()
+ghost_list = pygame.sprite.Group()
+pacman1 = pygame.sprite.Group()
+all_sprite_list = pygame.sprite.Group()
+
+
+            
+# Make the walls. (x_pos, y_pos, width, height)
+#All
+#sprites
+wall_list = pygame.sprite.Group()
+
+wall=Wall(80,80,420,5)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(80,85,5,445)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(80,530,420,5)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(500,80,5,455)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(280,85,2,100)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(125,150,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(350,150,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(125,200,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(125,200,2,95)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(350,200,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(445,200,2,95)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(190,int(252.5),200,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(190,int(252.5),2,100)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(190,int(352.5),200,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(390,int(252.5),2,100)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(85,340,40,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(460,340,40,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(190,400,200,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(280,450,2,85)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(190,450,200,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(125,495,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(125,400,2,95)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(370,495,95,2)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+wall=Wall(465,400,2,95)
+wall_list.add(wall)
+all_sprite_list.add(wall)
+
+pacman=Character(int(272.5),360)
+pacman.walls=wall_list
+pacman1.add(pacman)
+all_sprite_list.add(pacman)
+
+ghost = Clyde(85,85)
+ghost.walls = wall_list
+ghost_list.add(ghost)
+all_sprite_list.add(ghost)
+
+ghost = Enemy(85,455)
+ghost.walls = wall_list
+ghost_list.add(ghost)
+all_sprite_list.add(ghost)
+
+ghost = Blinky(455,85)
+ghost.walls = wall_list
+ghost_list.add(ghost)
+all_sprite_list.add(ghost)
+
+ghost = Pinky(300,455)
+ghost.walls = wall_list
+ghost_list.add(ghost)
+all_sprite_list.add(ghost)
+
+#-------------------------Pellets (PAC-MAN food)-------------------------------
+for i in range(20,160,10):
+        block=Block(YELLOW,3,3)
+        block.rect.x=85+i
+        block.rect.y=120
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,215,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 105
+        block.rect.y = 100+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,75,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 85+i
+        block.rect.y = 310
+        
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,160,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 85+i
+        block.rect.y = 175
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,140,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 250
+        block.rect.y = 90+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,280,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 155
+        block.rect.y = 200+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,300,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 135+i
+        block.rect.y= 230
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,190,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 290+i
+        block.rect.y = 120
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,140,10):
+        block = Block(YELLOW, 3 ,3)
+        block.rect.x = 310
+        block.rect.y = 90+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,220,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 480
+        block.rect.y = 90+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,185,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 290+i
+        block.rect.y = 175
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,280,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 425
+        block.rect.y = 200+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,180,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 70+i
+        block.rect.y = 375
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,180,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 300+i
+        block.rect.y = 375
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,285,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 135+i
+        block.rect.y = 430
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,120,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 135+i
+        block.rect.y = 470
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,140,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 280+i
+        block.rect.y = 470
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,155,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 100
+        block.rect.y = 355+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,170,10):
+        block = Block(YELLOW, 3 ,3)
+        block.rect.x = 480
+        block.rect.y = 345+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,190,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 70+i
+        block.rect.y = 515
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,210,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 280+i
+        block.rect.y = 515
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,80,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 260
+        block.rect.y = 440+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,80,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 300
+        block.rect.y = 440+i
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+
+for i in range(30,90,10):
+        block = Block(YELLOW, 3, 3)
+        block.rect.x = 400+i
+        block.rect.y = 315
+
+        block_list.add(block)
+        all_sprite_list.add(block)
+        
+clock = pygame.time.Clock()
+done=False
+
+score=0
+lives=3
+
+
+
+# -------- Main Program Loop -----------
+while not done:
+    # --- Main event loop
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        if event.type == pygame.KEYDOWN:
+             if event.key == pygame.K_LEFT:
+                pacman.changespeed(-3,0)
+             elif event.key == pygame.K_RIGHT:
+                pacman.changespeed(3,0)
+             elif event.key == pygame.K_UP:
+                pacman.changespeed(0,-3)
+             elif event.key == pygame.K_DOWN:
+                pacman.changespeed(0,3)
+        if event.type == pygame.KEYUP:
+                 if event.key == pygame.K_LEFT:
+                    pacman.changespeed(3,0)
+                 elif event.key==pygame.K_RIGHT:
+                    pacman.changespeed(-3,0)
+                 elif event.key==pygame.K_UP:
+                    pacman.changespeed(0,3)
+                 elif event.key==pygame.K_DOWN:
+                    pacman.changespeed(0,-3)
+    all_sprite_list.update()
+    #Bye-bye Pacman
+    for ghost in ghost_list:
+            ghost_hit_list = pygame.sprite.spritecollide(ghost,pacman1 ,False)
+
+            for pacman in ghost_hit_list:
+                    lives -= 1
+                    print(lives)
+    
+
+   
+     
+    #------------------------DRAWING CODE BEGINS---------------------------
+    screen.fill(BLACK)
+    #Presentation screen
+    pygame.draw.rect(screen,ORANGE,[75,50,500,200])
+    pygame.draw.rect(screen,BLACK,[80,55,490,190],3)
+    pygame.draw.rect(screen,RED,[75,50,500,200],5)
+    font = pygame.font.SysFont('Pacfont', 75, True, False)
+    text = font.render("PAC-MAN",True,YELLOW)
+    font = pygame.font.SysFont('Pacfont',30,True,False)
+    text1 = font.render("PRESS ENTER",True,WHITE)
+    screen.blit(text, [90, 100])
+    screen.blit(text1, [175,300])
+    font = pygame.font.SysFont('Pacfont',50,True,False)
+    text2 = font.render("C--------------------------",True,YELLOW)
+    screen.blit(text2, [90,500])
+    #Instructions screen
+    write_instructions(screen)
+    #Gameplay begins
+    make_level(screen)
+
+    
+    
+    #Print scores
+    block_hit_list = pygame.sprite.spritecollide(pacman, block_list, True)
+    for block in block_hit_list:
+        score +=1
+        print(score)
+    
+     #Continues after death
+    if lives == 2:
+                make_level(screen)
+                pacman.rect.x = int(272.5)
+                pacman.rect.y = 360
+                pacman_moves(screen)
+                
+                
+    if lives == 1:
+                make_level(screen)
+                pacman.rect.x = int(272.5)
+                pacman.rect.y = 360
+                pacman_moves(screen)
+                
+    #GAME OVER
+    elif lives == 0:
+                screen.fill(BLACK)
+                font = pygame.font.SysFont('Pacfont', 40, True, False)
+                text = font.render("GAME OVER", True, BLUE)
+                screen.blit(text, [120,120])
+                show_hiscores(screen, 240, 230)
+
+                font = pygame.font.SysFont('Pacfont', 25, True, False)
+                text1 = font.render("Press ENTER", True, BLUE)
+                screen.blit(text1, [170,540])
+
+                if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                                screen.fill(BLACK)
+                                draw_credits(screen)
+                if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_RETURN:
+                                screen.fill(BLACK)
+                                draw_credits(screen)
+
+    #Next level
+    if score==354:
+                screen.fill(BLACK)
+                font=pygame.font.SysFont('Pacfont',40,True,False)
+                text=font.render("CONGRATULATIONS!",True,RED)
+                font1=pygame.font.SysFont('Pacfont',15,True,False)
+                text1=font1.render("PRESS THE SPACE KEY TO PLAY AGAIN",True,WHITE)
+                screen.blit(text,[30,100])
+                screen.blit(text1,[90,250])
+                make_level(screen)
+
+                       
+    font = pygame.font.SysFont('Calibri', 25, True, False)
+    text = font.render("Score: " + str(score), True, WHITE)
+    text1 = font.render("Lives: " + str(lives), True, WHITE)
+    screen.blit(text, [50, 10])
+    screen.blit(text1, [500,10])
+
+
+    pygame.display.flip()
+    clock.tick(60)
+pygame.quit()
