@@ -1,2 +1,2 @@
 # Pac-Man
-My first CS project 
+My first CS project.
